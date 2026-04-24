@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>太魯閣主場地 3D 配置示意</title>
+  <style>
+    :root {
+      --bg-top: #efe7da;
+      --bg-bottom: #dfead0;
+      --panel: rgba(255,255,255,.92);
+      --panel-border: rgba(67,88,60,.12);
+      --text: #203124;
+      --muted: #5a6b5c;
+      --accent: #8d7446;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Microsoft JhengHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 78%, rgba(190,214,161,.55), transparent 32%),
+        radial-gradient(circle at 85% 18%, rgba(255,255,255,.78), transparent 28%),
+        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+    }
+    #app { position: relative; width: 100%; height: 100%; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .panel {
+      position: absolute;
+      z-index: 2;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 22px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 48px rgba(54, 68, 48, 0.10);
+    }
+    .title {
+      top: 20px;
+      left: 20px;
+      padding: 18px 22px;
+      max-width: min(520px, calc(100vw - 40px));
+    }
+    .title h1 {
+      margin: 0 0 8px;
+      font-size: clamp(22px, 2.2vw, 34px);
+      line-height: 1.2;
+    }
+    .title p, .legend li, .actions p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .legend {
+      top: 20px;
+      right: 20px;
+      width: min(300px, calc(100vw - 40px));
+      padding: 16px 18px;
+    }
+    .legend h2, .actions h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .legend ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+    .legend li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .swatch {
+      width: 30px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.12);
+      flex: 0 0 auto;
+    }
+    .actions {
+      left: 20px;
+      bottom: 20px;
+      padding: 14px 16px;
+      width: min(320px, calc(100vw - 40px));
+    }
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font: inherit;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(135deg, #8d7446, #a88d59);
+      box-shadow: 0 10px 18px rgba(145,114,63,.2);
+    }
+    button.secondary {
+      background: linear-gradient(135deg, #708163, #5f6f58);
+    }
+    .footer {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      z-index: 2;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.84);
+      color: var(--muted);
+      font-size: 12px;
+      backdrop-filter: blur(10px);
+    }
+    @media (max-width: 900px) {
+      .legend { top: auto; bottom: 20px; right: 20px; }
+      .actions { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="panel title">
+      <h1>115 年度第三屆全民太魯閣族運動會</h1>
+      <p>依照已匯出的主場地配置建立的 3D 網頁示意。可用滑鼠拖曳旋轉、滾輪縮放，從不同角度查看主舞台、營火區、長官區、後台、觀眾帳篷、電視牆、入口與流動廁所區。</p>
+    </div>
+
+    <div class="panel legend">
+      <h2>分區圖例</h2>
+      <ul>
+        <li><span class="swatch" style="background:#e4e2cb"></span>主舞台 / 聖火台</li>
+        <li><span class="swatch" style="background:#f0e4b0"></span>觀眾 / 長官 / 後台帳篷</li>
+        <li><span class="swatch" style="background:#d9eef7"></span>流動廁所區</li>
+        <li><span class="swatch" style="background:#2e2e2e"></span>200 吋電視牆</li>
+        <li><span class="swatch" style="background:#3d6d3a"></span>周邊樹帶</li>
+      </ul>
+    </div>
+
+    <div class="panel actions">
+      <h2>觀看方式</h2>
+      <p>左鍵拖曳可旋轉，右鍵拖曳可平移，滑鼠滾輪可縮放。這版是展示版，會自動載入目前匯出的配置。</p>
+      <div class="buttons">
+        <button id="resetView">重設視角</button>
+        <button id="toggleRotate" class="secondary">切換自轉</button>
+      </div>
+    </div>
+
+    <div class="footer">GitHub Pages 展示版</div>
+  </div>
+
+  <script src="https://unpkg.com/three@0.124.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.124.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const layout = {
+      boundaryScale: 2.35,
+      items: [
+        { type: "stage", name: "主舞台", x: 12.58, z: -1.85, scale: 0.8 },
+        { type: "ledWall", name: "電視牆 A", x: 10.33, z: -24.33, scale: 1 },
+        { type: "ledWall", name: "電視牆 B", x: 10.24, z: 22.94, scale: 1 },
+        { type: "campfire", name: "營火區", x: 34.99, z: -2.15, scale: 1 },
+        { type: "officialsTent", name: "長官區", x: 69.99, z: -2.58, scale: 1 },
+        { type: "backstageTent", name: "後台 A", x: -15.3, z: -16.74, scale: 1 },
+        { type: "backstageTent", name: "後台 B", x: -14.03, z: 0.03, scale: 1 },
+        { type: "backstageTent", name: "後台 C", x: -13.73, z: 15.55, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 B", x: 40.98, z: -41.48, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 C", x: 12.26, z: -40.96, scale: 1 },
+        { type: "toiletArea", name: "流動廁所區", x: -7, z: 40.91, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 4", x: 26.74, z: -40.94, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 5", x: 42.29, z: 42.17, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 6", x: 54.71, z: -42.06, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 7", x: 71.54, z: -20.61, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 8", x: 72.51, z: 13.62, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 9", x: 72.66, z: 26.8, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 10", x: 72.79, z: 39.14, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 11", x: 57.76, z: 42.2, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 12", x: 28.42, z: 42.33, scale: 1 },
+        { type: "audienceTent", name: "觀眾帳篷 13", x: 14.86, z: 42.16, scale: 1 },
+        { type: "toiletArea", name: "流動廁所區 2", x: -19.43, z: 40.99, scale: 1 },
+        { type: "toiletArea", name: "流動廁所區 3", x: -30.78, z: 41.08, scale: 1 },
+        { type: "toiletArea", name: "流動廁所區 4", x: -43.49, z: 40.44, scale: 1 }
+      ]
+    };
+
+    const BASE_SITE_POLYGON = [
+      [-45, -31], [43, -29], [47, 30], [-32, 32], [-47, 3]
+    ];
+    const SITE_CENTER = BASE_SITE_POLYGON.reduce((acc, [x, z]) => ({ x: acc.x + x, z: acc.z + z }), { x: 0, z: 0 });
+    SITE_CENTER.x /= BASE_SITE_POLYGON.length;
+    SITE_CENTER.z /= BASE_SITE_POLYGON.length;
+
+    const TREE_LAYOUT = [
+      [10, 8, 1.15], [16, 8, 0.95], [20, 12, 0.95], [9, 18, 1.15], [7, 27, 0.95], [6, 38, 0.95], [9, 50, 1.15], [20, 64, 0.95],
+      [35, 8, 0.95], [48, 8, 1.15], [61, 8, 0.95], [75, 8, 0.95], [90, 10, 1.15], [93, 22, 0.95], [94, 35, 0.95], [92, 50, 1.15],
+      [88, 62, 0.95], [34, 66, 1.15], [48, 67, 0.95], [63, 66, 0.95], [80, 65, 1.15], [93, 61, 0.95]
+    ];
+
+    const app = document.getElementById("app");
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    app.prepend(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0xe8eadf, 140, 360);
+
+    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 1200);
+    const defaultCameraPosition = new THREE.Vector3(118, 102, 132);
+    camera.position.copy(defaultCameraPosition);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.set(15, 10, 0);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 70;
+    controls.maxDistance = 320;
+    controls.maxPolarAngle = Math.PI * 0.48;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.45;
+
+    scene.add(new THREE.HemisphereLight(0xfff9ef, 0x70815d, 0.98));
+    const sun = new THREE.DirectionalLight(0xfff5d7, 1.08);
+    sun.position.set(90, 130, 40);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.left = -180;
+    sun.shadow.camera.right = 180;
+    sun.shadow.camera.top = 180;
+    sun.shadow.camera.bottom = -180;
+    sun.shadow.camera.near = 10;
+    sun.shadow.camera.far = 380;
+    scene.add(sun);
+    const fillLight = new THREE.DirectionalLight(0xcfd9c5, 0.22);
+    fillLight.position.set(-90, 60, -80);
+    scene.add(fillLight);
+
+    const root = new THREE.Group();
+    scene.add(root);
+
+    function material(hex, roughness = 0.88, metalness = 0.03) {
+      return new THREE.MeshStandardMaterial({ color: hex, roughness, metalness });
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function labelSprite(text, scale = 8.8) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 512;
+      canvas.height = 152;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(255,255,255,0.94)";
+      roundRect(ctx, 12, 12, canvas.width - 24, canvas.height - 24, 28);
+      ctx.fill();
+      ctx.fillStyle = "#314036";
+      ctx.font = "700 48px Microsoft JhengHei";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 2);
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.needsUpdate = true;
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false, depthWrite: false }));
+      sprite.scale.set(scale, scale * 0.3, 1);
+      sprite.renderOrder = 999;
+      return sprite;
+    }
+
+    function getSitePolygon(scale) {
+      return BASE_SITE_POLYGON.map(([x, z]) => [
+        SITE_CENTER.x + (x - SITE_CENTER.x) * scale,
+        SITE_CENTER.z + (z - SITE_CENTER.z) * scale
+      ]);
+    }
+
+    function sitePointFromPercent(px, pz) {
+      const polygon = getSitePolygon(layout.boundaryScale);
+      const minX = Math.min(...polygon.map(p => p[0]));
+      const maxX = Math.max(...polygon.map(p => p[0]));
+      const minZ = Math.min(...polygon.map(p => p[1]));
+      const maxZ = Math.max(...polygon.map(p => p[1]));
+      return { x: minX + (maxX - minX) * px, z: minZ + (maxZ - minZ) * pz };
+    }
+
+    function spreadSitePoint(px, pz, spread = 1) {
+      const point = sitePointFromPercent(px, pz);
+      return {
+        x: SITE_CENTER.x + (point.x - SITE_CENTER.x) * spread,
+        z: SITE_CENTER.z + (point.z - SITE_CENTER.z) * spread
+      };
+    }
+
+    function addGround() {
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(460, 420), material(0xf7f5ee, 1));
+      floor.rotation.x = -Math.PI / 2;
+      floor.receiveShadow = true;
+      scene.add(floor);
+
+      const shape = new THREE.Shape();
+      const polygon = getSitePolygon(layout.boundaryScale);
+      polygon.forEach(([x, z], index) => index === 0 ? shape.moveTo(x, z) : shape.lineTo(x, z));
+      shape.closePath();
+
+      const site = new THREE.Mesh(new THREE.ShapeGeometry(shape), material(0xfbfbf7, 1));
+      site.rotation.x = -Math.PI / 2;
+      site.position.y = 0.03;
+      site.receiveShadow = true;
+      root.add(site);
+
+      const line = new THREE.LineLoop(
+        new THREE.BufferGeometry().setFromPoints(polygon.map(([x, z]) => new THREE.Vector3(x, 0.22, z))),
+        new THREE.LineBasicMaterial({ color: 0x9cb294, transparent: true, opacity: 0.75 })
+      );
+      root.add(line);
+    }
+
+    function addTree(siteX, siteZ, scale = 1) {
+      const group = new THREE.Group();
+      const percentX = siteX / 100;
+      const percentZ = siteZ / 100;
+      const spread = 1 + (layout.boundaryScale - 1) * 0.8;
+      const pos = spreadSitePoint(percentX, percentZ, spread);
+      group.position.set(pos.x, 0, pos.z);
+      group.scale.setScalar(scale);
+
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.8, 6.2, 8), material(0x8c673c));
+      trunk.position.y = 3.1;
+      trunk.castShadow = true;
+      group.add(trunk);
+
+      const topA = new THREE.Mesh(new THREE.SphereGeometry(3.6, 20, 18), material(0x6fa85f));
+      topA.position.set(-1.6, 8.7, 0.6);
+      topA.castShadow = true;
+      group.add(topA);
+
+      const topB = new THREE.Mesh(new THREE.SphereGeometry(3.1, 20, 18), material(0x5a914d));
+      topB.position.set(1.8, 8.2, -0.4);
+      topB.castShadow = true;
+      group.add(topB);
+
+      const shadow = new THREE.Mesh(new THREE.CircleGeometry(4.6, 28), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.08 }));
+      shadow.rotation.x = -Math.PI / 2;
+      shadow.position.y = 0.03;
+      group.add(shadow);
+
+      root.add(group);
+    }
+
+    function addStage(item) {
+      const group = new THREE.Group();
+      group.position.set(item.x, 0, item.z);
+      group.scale.setScalar(item.scale);
+
+      const outer = new THREE.Mesh(new THREE.CylinderGeometry(18, 18, 1.6, 64), material(0xdce8c2));
+      outer.position.y = 0.8;
+      outer.receiveShadow = true;
+      group.add(outer);
+
+      const ring = new THREE.Mesh(new THREE.CylinderGeometry(14, 14, 1.2, 64), material(0xf7f4ec));
+      ring.position.y = 1.45;
+      ring.receiveShadow = true;
+      group.add(ring);
+
+      const disc = new THREE.Mesh(new THREE.CylinderGeometry(10.8, 10.8, 0.35, 64), material(0xffffff));
+      disc.position.y = 2.1;
+      disc.receiveShadow = true;
+      group.add(disc);
+
+      const fireBase = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.9, 0.38, 40), material(0xe8dcc6));
+      fireBase.position.y = 2.45;
+      group.add(fireBase);
+
+      const flame = new THREE.Mesh(new THREE.ConeGeometry(1.3, 3.8, 18), material(0xcd7d27, 0.55, 0.02));
+      flame.position.y = 4.35;
+      group.add(flame);
+
+      const label = labelSprite("主舞台 / 聖火台", 11.5);
+      label.position.set(0, 13.2, 0);
+      group.add(label);
+
+      root.add(group);
+    }
+
+    function addCampfire(item) {
+      const group = new THREE.Group();
+      group.position.set(item.x, 0, item.z);
+
+      const stoneRing = new THREE.Mesh(new THREE.CylinderGeometry(5.4, 5.4, 0.42, 42), material(0xe5d7b5));
+      stoneRing.position.y = 0.2;
+      group.add(stoneRing);
+
+      const voidRing = new THREE.Mesh(new THREE.CylinderGeometry(3.8, 3.8, 0.46, 42), material(0xfaf8f0));
+      voidRing.position.y = 0.24;
+      group.add(voidRing);
+
+      const fire = new THREE.Mesh(new THREE.ConeGeometry(1.45, 3.1, 16), material(0xd27c25, 0.55, 0.02));
+      fire.position.y = 2.0;
+      group.add(fire);
+
+      for (let i = 0; i < 10; i += 1) {
+        const angle = (Math.PI * 2 * i) / 10;
+        const ember = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 12), material(0xc89a35, 0.4, 0));
+        ember.position.set(Math.cos(angle) * 5.8, 0.28, Math.sin(angle) * 5.8);
+        group.add(ember);
+      }
+
+      const label = labelSprite("營火區", 8.2);
+      label.position.set(0, 8.5, 0);
+      group.add(label);
+
+      root.add(group);
+    }
+
+    function addLed(item) {
+      const group = new THREE.Group();
+      group.position.set(item.x, 0, item.z);
+
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.3, 12, 5.2), material(0x2e2e2e, 0.45, 0.2));
+      body.position.y = 6;
+      body.castShadow = true;
+      group.add(body);
+
+      const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 10.5), new THREE.MeshStandardMaterial({ color: 0x101010, emissive: 0x141414, roughness: 0.3, metalness: 0.15 }));
+      screen.position.set(0.66, 6, 0);
+      screen.rotation.y = Math.PI / 2;
+      group.add(screen);
+
+      const label = labelSprite(item.name, 7.8);
+      label.position.set(0, 14.6, 0);
+      group.add(label);
+
+      root.add(group);
+    }
+
+    function addTent(item, width, depth, height, labelText = "") {
+      const group = new THREE.Group();
+      group.position.set(item.x, 0, item.z);
+
+      const floor = new THREE.Mesh(new THREE.BoxGeometry(width, 0.25, depth), material(0xe8e4d8));
+      floor.position.y = 0.12;
+      group.add(floor);
+
+      [[-width/2 + 0.35, -depth/2 + 0.35], [width/2 - 0.35, -depth/2 + 0.35], [-width/2 + 0.35, depth/2 - 0.35], [width/2 - 0.35, depth/2 - 0.35]].forEach(([x, z]) => {
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, height, 8), material(0x8f7345));
+        pole.position.set(x, height / 2, z);
+        group.add(pole);
+      });
+
+      const roof = new THREE.Mesh(new THREE.ConeGeometry(Math.max(width, depth) * 0.44, height * 0.78, 4), material(0xf7f0be));
+      roof.position.y = height + 0.7;
+      roof.rotation.y = Math.PI / 4;
+      roof.castShadow = true;
+      group.add(roof);
+
+      if (labelText) {
+        const label = labelSprite(labelText, width > 9 ? 8.8 : 7.8);
+        label.position.set(0, height + 6.2, 0);
+        group.add(label);
+      }
+
+      root.add(group);
+    }
+
+    function addEntrance(item) {
+      const group = new THREE.Group();
+      group.position.set(item.x, 0, item.z);
+
+      const base = new THREE.Mesh(new THREE.BoxGeometry(11, 0.3, 6.6), material(0xf2eee4));
+      base.position.y = 0.15;
+      group.add(base);
+
+      [[-3.8, -1.6], [3.8, -1.6], [-3.8, 1.6], [3.8, 1.6]].forEach(([x, z]) => {
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 5.6, 8), material(0x94784b));
+        pole.position.set(x, 2.8, z);
+        group.add(pole);
+      });
+
+      const roof = new THREE.Mesh(new THREE.ConeGeometry(5.4, 4.8, 4), material(0xefe1ab));
+      roof.position.y = 6.3;
+      roof.rotation.y = Math.PI / 4;
+      group.add(roof);
+
+      const label = labelSprite("入口", 7.6);
+      label.position.set(0, 11.6, 0);
+      group.add(label);
+
+      root.add(group);
+    }
+
+    function addToiletArea(item) {
+      const group = new THREE.Group();
+      group.position.set(item.x, 0, item.z);
+
+      const pad = new THREE.Mesh(new THREE.BoxGeometry(11.2, 0.28, 12.5), material(0xd7ecf8));
+      pad.position.y = 0.14;
+      group.add(pad);
+
+      for (let row = 0; row < 3; row += 1) {
+        for (let col = 0; col < 2; col += 1) {
+          const unit = new THREE.Group();
+          unit.position.set((col - 0.5) * 3.8, 0.28, (row - 1) * 3.2);
+          const body = new THREE.Mesh(new THREE.BoxGeometry(2.6, 3.5, 2.2), material(0x9fcdee));
+          body.position.y = 1.75;
+          unit.add(body);
+          const roof = new THREE.Mesh(new THREE.BoxGeometry(2.7, 0.12, 2.3), material(0xf1f8fd));
+          roof.position.y = 3.58;
+          unit.add(roof);
+          group.add(unit);
+        }
+      }
+
+      if (item.name === "流動廁所區") {
+        const label = labelSprite("流動廁所區", 8.5);
+        label.position.set(0, 8.8, 0);
+        group.add(label);
+      }
+
+      root.add(group);
+    }
+
+    addGround();
+    TREE_LAYOUT.forEach(([x, z, scale]) => addTree(x, z, scale));
+    layout.items.forEach((item) => {
+      if (item.type === "stage") addStage(item);
+      if (item.type === "campfire") addCampfire(item);
+      if (item.type === "ledWall") addLed(item);
+      if (item.type === "officialsTent") addTent(item, 9.8, 17.5, 7.2, "長官區");
+      if (item.type === "backstageTent") addTent(item, 8.4, 9.8, 6.6, item.name === "後台 A" ? "後台區" : "");
+      if (item.type === "audienceTent") addTent(item, 8.8, 10.2, 6.8, ["觀眾帳篷 B", "觀眾帳篷 C", "觀眾帳篷 4"].includes(item.name) ? "觀眾帳篷區" : "");
+      if (item.type === "entranceGate") addEntrance(item);
+      if (item.type === "toiletArea") addToiletArea(item);
+    });
+
+    function resetView() {
+      camera.position.copy(defaultCameraPosition);
+      controls.target.set(15, 10, 0);
+      controls.update();
+    }
+
+    document.getElementById("resetView").addEventListener("click", resetView);
+    document.getElementById("toggleRotate").addEventListener("click", () => {
+      controls.autoRotate = !controls.autoRotate;
+    });
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function animate() {
+      controls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
