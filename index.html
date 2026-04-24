@@ -413,13 +413,13 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.72;
+    renderer.toneMappingExposure = 0.56;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     app.prepend(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0xe8eadf, 135, 340);
+    scene.fog = new THREE.Fog(0xe8eadf, 220, 520);
 
     const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 1600);
     const cameraHome = {
@@ -438,10 +438,10 @@
     controls.autoRotate = false;
     controls.autoRotateSpeed = 0.55;
 
-    const ambient = new THREE.HemisphereLight(0xfff9ef, 0x70815d, 0.74);
+    const ambient = new THREE.HemisphereLight(0xfff9ef, 0x70815d, 0.56);
     scene.add(ambient);
 
-    const sun = new THREE.DirectionalLight(0xfff5d7, 0.78);
+    const sun = new THREE.DirectionalLight(0xfff5d7, 0.58);
     sun.position.set(90, 130, 40);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
@@ -453,7 +453,7 @@
     sun.shadow.camera.far = 320;
     scene.add(sun);
 
-    const fillLight = new THREE.DirectionalLight(0xcfd9c5, 0.14);
+    const fillLight = new THREE.DirectionalLight(0xcfd9c5, 0.08);
     fillLight.position.set(-90, 60, -80);
     scene.add(fillLight);
 
@@ -701,18 +701,20 @@
       const center = bounds.getCenter(new THREE.Vector3());
       const maxDim = Math.max(size.x, size.z, 1);
       const nextTarget = new THREE.Vector3(center.x, Math.max(6, center.y + size.y * 0.1), center.z);
+      // Shared web view should feel closer to the working top-down layout,
+      // so we bias the framing upward and reduce the diagonal skew.
       const nextPosition = new THREE.Vector3(
-        center.x + maxDim * 0.92,
-        Math.max(78, size.y + maxDim * 0.86),
-        center.z + maxDim * 1.02
+        center.x + maxDim * 0.44,
+        Math.max(104, size.y + maxDim * 1.24),
+        center.z + maxDim * 0.52
       );
 
       cameraHome.position.copy(nextPosition);
       cameraHome.target.copy(nextTarget);
       camera.position.copy(cameraHome.position);
       controls.target.copy(cameraHome.target);
-      controls.minDistance = Math.max(28, maxDim * 0.35);
-      controls.maxDistance = Math.max(220, maxDim * 3.0);
+      controls.minDistance = Math.max(34, maxDim * 0.48);
+      controls.maxDistance = Math.max(260, maxDim * 3.4);
       controls.update();
     }
 
