@@ -1,0 +1,372 @@
+{
+    "exportedAt":  "2026-04-24T17:30:55.8937726Z",
+    "sceneScale":  1.55,
+    "boundaryScale":  2.35,
+    "counters":  {
+                     "audienceTent":  13,
+                     "ledWall":  2,
+                     "toiletArea":  4
+                 },
+    "items":  [
+                  {
+                      "id":  "stage-main",
+                      "name":  "Stage",
+                      "type":  "stage",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  12.58,
+                                       "z":  -1.85
+                                   },
+                      "positionArray":  [
+                                            12.58,
+                                            -1.85
+                                        ],
+                      "scale":  0.8
+                  },
+                  {
+                      "id":  "led-a",
+                      "name":  "LED A",
+                      "type":  "ledWall",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  10.33,
+                                       "z":  -24.33
+                                   },
+                      "positionArray":  [
+                                            10.33,
+                                            -24.33
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "led-b",
+                      "name":  "LED B",
+                      "type":  "ledWall",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  10.24,
+                                       "z":  22.94
+                                   },
+                      "positionArray":  [
+                                            10.24,
+                                            22.94
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "campfire-main",
+                      "name":  "Campfire",
+                      "type":  "campfire",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  34.99,
+                                       "z":  -2.15
+                                   },
+                      "positionArray":  [
+                                            34.99,
+                                            -2.15
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "officials-main",
+                      "name":  "Officials",
+                      "type":  "officialsTent",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  69.99,
+                                       "z":  -2.58
+                                   },
+                      "positionArray":  [
+                                            69.99,
+                                            -2.58
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "backstage-a",
+                      "name":  "Backstage A",
+                      "type":  "backstageTent",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  -15.3,
+                                       "z":  -16.74
+                                   },
+                      "positionArray":  [
+                                            -15.3,
+                                            -16.74
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "backstage-b",
+                      "name":  "Backstage B",
+                      "type":  "backstageTent",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  -14.03,
+                                       "z":  0.03
+                                   },
+                      "positionArray":  [
+                                            -14.03,
+                                            0.03
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "backstage-c",
+                      "name":  "Backstage C",
+                      "type":  "backstageTent",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  -13.73,
+                                       "z":  15.55
+                                   },
+                      "positionArray":  [
+                                            -13.73,
+                                            15.55
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audience-b",
+                      "name":  "Audience B",
+                      "type":  "audienceTent",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  40.98,
+                                       "z":  -41.48
+                                   },
+                      "positionArray":  [
+                                            40.98,
+                                            -41.48
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audience-c",
+                      "name":  "Audience C",
+                      "type":  "audienceTent",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  12.26,
+                                       "z":  -40.96
+                                   },
+                      "positionArray":  [
+                                            12.26,
+                                            -40.96
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "toilet-main",
+                      "name":  "Toilet Area",
+                      "type":  "toiletArea",
+                      "isDefault":  true,
+                      "position":  {
+                                       "x":  -7,
+                                       "z":  40.91
+                                   },
+                      "positionArray":  [
+                                            -7,
+                                            40.91
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776727922922",
+                      "name":  "Audience 4",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  26.74,
+                                       "z":  -40.94
+                                   },
+                      "positionArray":  [
+                                            26.74,
+                                            -40.94
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776727942210",
+                      "name":  "Audience 5",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  42.29,
+                                       "z":  42.17
+                                   },
+                      "positionArray":  [
+                                            42.29,
+                                            42.17
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776728011626",
+                      "name":  "Audience 6",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  54.71,
+                                       "z":  -42.06
+                                   },
+                      "positionArray":  [
+                                            54.71,
+                                            -42.06
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776728014907",
+                      "name":  "Audience 7",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  71.54,
+                                       "z":  -20.61
+                                   },
+                      "positionArray":  [
+                                            71.54,
+                                            -20.61
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776728017482",
+                      "name":  "Audience 8",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  72.51,
+                                       "z":  13.62
+                                   },
+                      "positionArray":  [
+                                            72.51,
+                                            13.62
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776728020298",
+                      "name":  "Audience 9",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  72.66,
+                                       "z":  26.8
+                                   },
+                      "positionArray":  [
+                                            72.66,
+                                            26.8
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776728024746",
+                      "name":  "Audience 10",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  72.79,
+                                       "z":  39.14
+                                   },
+                      "positionArray":  [
+                                            72.79,
+                                            39.14
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776728027362",
+                      "name":  "Audience 11",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  57.76,
+                                       "z":  42.2
+                                   },
+                      "positionArray":  [
+                                            57.76,
+                                            42.2
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776728032994",
+                      "name":  "Audience 12",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  28.42,
+                                       "z":  42.33
+                                   },
+                      "positionArray":  [
+                                            28.42,
+                                            42.33
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "audienceTent-1776728035850",
+                      "name":  "Audience 13",
+                      "type":  "audienceTent",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  14.86,
+                                       "z":  42.16
+                                   },
+                      "positionArray":  [
+                                            14.86,
+                                            42.16
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "toiletArea-1776728062203",
+                      "name":  "Toilet Area 2",
+                      "type":  "toiletArea",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  -19.43,
+                                       "z":  40.99
+                                   },
+                      "positionArray":  [
+                                            -19.43,
+                                            40.99
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "toiletArea-1776728065739",
+                      "name":  "Toilet Area 3",
+                      "type":  "toiletArea",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  -30.78,
+                                       "z":  41.08
+                                   },
+                      "positionArray":  [
+                                            -30.78,
+                                            41.08
+                                        ],
+                      "scale":  1
+                  },
+                  {
+                      "id":  "toiletArea-1776728071650",
+                      "name":  "Toilet Area 4",
+                      "type":  "toiletArea",
+                      "isDefault":  false,
+                      "position":  {
+                                       "x":  -43.49,
+                                       "z":  40.44
+                                   },
+                      "positionArray":  [
+                                            -43.49,
+                                            40.44
+                                        ],
+                      "scale":  1
+                  }
+              ]
+}
